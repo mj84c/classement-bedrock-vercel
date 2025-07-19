@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Classement Minecraft Bedrock</title>
+  <script src="https://unpkg.com/tabletop@1.5.4/build/tabletop.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 90%;
+      margin: auto;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th {
+      background-color: #f0f0f0;
+      cursor: pointer;
+    }
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Classement Minecraft Bedrock</h1>
+  <table id="classement">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Rang</th>
+        <th onclick="sortTable(1)">Nom</th>
+        <th onclick="sortTable(2)">Score</th>
+        <th onclick="sortTable(3)">Mode</th>
+        <th onclick="sortTable(4)">Plateforme</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    function showInfo(data) {
+      const tbody = document.querySelector("#classement tbody");
+      tbody.innerHTML = "";
+      data.forEach(row => {
+        let tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.Rang}</td>
+          <td>${row.Nom}</td>
+          <td>${row.Score}</td>
+          <td>${row.Mode}</td>
+          <td>${row.Plateforme}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      Tabletop.init({
+        key: '1fndokXhY-UfATBXw0jAlNd1r7VWKKLmn5ufwJHrRC-4',
+        callback: showInfo,
+        simpleSheet: true
+      });
+    });
+
+    function sortTable(n) {
+      const table = document.getElementById("classement");
+      let switching = true;
+      let dir = "asc";
+      let switchcount = 0;
+
+      while (switching) {
+        switching = false;
+        let rows = table.rows;
+        for (let i = 1; i < rows.length - 1; i++) {
+          let shouldSwitch = false;
+          let x = rows[i].getElementsByTagName("TD")[n];
+          let y = rows[i + 1].getElementsByTagName("TD")[n];
+
+          let xVal = isNaN(x.innerText) ? x.innerText.toLowerCase() : parseFloat(x.innerText);
+          let yVal = isNaN(y.innerText) ? y.innerText.toLowerCase() : parseFloat(y.innerText);
+
+          if ((dir == "asc" && xVal > yVal) || (dir == "desc" && xVal < yVal)) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount++;
+        } else {
+          if (switchcount === 0 && dir === "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
